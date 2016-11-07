@@ -1,0 +1,25 @@
+<!doctype html>
+
+<html>
+	<head>
+		<title>IoT Frontend</title>
+	</head>
+	<body ng-app="app">
+
+		<div ng-controller="OPCUA_Server_Ctrl">
+			<canvas
+				id="line"
+				class="chart chart-line"
+				chart-data="data"
+				chart-labels="labels"
+				chart-series="series"
+				chart-options="options"
+				chart-dataset-override="datasetOverride"
+				chart-click="onClick">
+			</canvas>
+		</div>
+
+		<!-- Javascript includes -->
+		<script src="bundle.js"></script>
+	</body>
+</html>

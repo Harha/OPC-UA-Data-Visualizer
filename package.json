@@ -1,0 +1,27 @@
+{
+  "name": "iot_frontend",
+  "version": "0.0.1",
+  "description": "Frontend for IoT Project. Visualizes OPC UA data.",
+  "main": "./app/app.js",
+  "scripts": {
+    "test": "test",
+    "build:js": "browserify ./app/app.js -o ./dist/bundle.js",
+    "build:html": "cpx ./app/**/*.html ./dist/",
+    "build:css": "cpx ./app/**/*.css ./dist/",
+    "build": "npm run build:js && npm run build:html && npm run build:css"
+  },
+  "keywords": [
+    "iot",
+    "frontend",
+    "opc",
+    "ua",
+    "opc",
+    "ua"
+  ],
+  "author": "harha",
+  "license": "MIT",
+  "dependencies": {
+    "angular": "^1.5.8",
+    "angular-chart.js": "^1.0.3"
+  }
+}
