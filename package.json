@@ -4,11 +4,12 @@
   "description": "Frontend for IoT Project. Visualizes OPC UA data.",
   "main": "./app/app.js",
   "scripts": {
-    "test": "test",
+    "clean": "rimraf ./dist && mkdir dist",
     "build:js": "browserify ./app/app.js -o ./dist/bundle.js",
     "build:html": "cpx ./app/**/*.html ./dist/",
     "build:css": "cpx ./app/**/*.css ./dist/",
-    "build": "npm run build:js && npm run build:html && npm run build:css"
+    "uglify:js": "uglifyjs ./dist/bundle.js --compress --output ./dist/bundle.js",
+    "build": "npm run build:js && npm run uglify:js && npm run build:html && npm run build:css"
   },
   "keywords": [
     "iot",
@@ -21,7 +22,7 @@
   "author": "harha",
   "license": "MIT",
   "dependencies": {
-    "angular": "^1.5.8",
-    "angular-chart.js": "^1.0.3"
+    "angular": "1.5.8",
+    "angular-chart.js": "1.0.3"
   }
 }
