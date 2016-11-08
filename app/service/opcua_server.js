@@ -6,6 +6,12 @@ module.exports = function($resource, config) {
 	var vm = this;
 
 	// Service resources
-	vm.OPCUA_Server = $resource(config.rest_url + '/opcuaservers/:serverId', {serverId: '@id', isArray: true});
+	vm.OPCUA_Server = $resource(
+		config.rest_url + '/opcuaservers/:serverId',
+		{serverId: '@id'},
+		{
+			'get': {method: 'GET', isArray: true}
+		}
+	);
 
 };

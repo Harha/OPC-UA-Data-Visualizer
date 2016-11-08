@@ -5,10 +5,13 @@ module.exports = function($scope, $log, OPCUA_Server_Srvce) {
 	// Controller instance
 	var vm = this;
 
-	// Get list of servers
+	// Controller resources
 	vm.server = OPCUA_Server_Srvce.OPCUA_Server;
-	vm.servers = vm.server.get({}, function(servers) {
-		$log.debug(servers);
+
+	// Fetch servers list
+	vm.server.get({}, function(servers) {
+		vm.servers = servers;
+		$log.debug('opcua_server.ctrl - Fetched servers list. Length: ' + vm.servers.length);
 	});
 
 	$scope.labels = ["January", "February", "March", "April", "May", "June", "July"];

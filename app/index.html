@@ -3,11 +3,26 @@
 <html>
 	<head>
 		<title>IoT Frontend</title>
+
+		<!-- Stylesheets -->
+		<link rel="stylesheet" href="./css/bootstrap.min.css">
 	</head>
 	<body ng-app="app">
 
-		<div ng-controller="OPCUA_Server_Ctrl">
-			<canvas
+		<div ng-controller="OPCUA_Server_Ctrl as vm">
+
+			<span uib-dropdown>
+				<a href id="simple-dropdown" uib-dropdown-toggle>
+					Test Dropdown
+				</a>
+				<ul class="dropdown-menu" uib-dropdown-menu arial-labelledby="simple-dropdown">
+					<li ng-repeat="server in vm.servers">
+						<a href>{{server.endpoint}}</a>
+					</li>
+				</ul>
+			</span>
+
+			<!--<canvas
 				id="line"
 				class="chart chart-line"
 				chart-data="data"
@@ -16,10 +31,10 @@
 				chart-options="options"
 				chart-dataset-override="datasetOverride"
 				chart-click="onClick">
-			</canvas>
+			</canvas>-->
 		</div>
 
 		<!-- Javascript includes -->
-		<script src="bundle.js"></script>
+		<script src="./scripts/bundle.js"></script>
 	</body>
 </html>

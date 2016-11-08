@@ -1,3 +1,7 @@
+// jQuery & Bootstrap
+$ = jQuery = require('jquery');
+var bootstrap = require('bootstrap');
+
 // Angular instance
 var angular = require('angular');
 
@@ -5,7 +9,10 @@ var angular = require('angular');
 var app = angular.module('app', [
 	// Angular includes
 	require('angular-resource'),
+	require('angular-animate'),
 	// 3rd party includes
+	require('angular-ui-bootstrap'),
+	require('angular-loading-bar'),
 	require('angular-chart.js')
 ]);
 
