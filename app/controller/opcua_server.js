@@ -1,6 +1,15 @@
 'use strict';
 
-module.exports = function($scope) {
+module.exports = function($scope, $log, OPCUA_Server_Srvce) {
+
+	// Controller instance
+	var vm = this;
+
+	// Get list of servers
+	vm.server = OPCUA_Server_Srvce.OPCUA_Server;
+	vm.servers = vm.server.get({}, function(servers) {
+		$log.debug(servers);
+	});
 
 	$scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
 	$scope.series = ['Series A', 'Series B'];
