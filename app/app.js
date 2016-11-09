@@ -11,6 +11,7 @@ var app = angular.module('app', [
 	require('angular-resource'),
 	require('angular-animate'),
 	// 3rd party includes
+	require('angular-ui-router'),
 	require('angular-ui-bootstrap'),
 	require('angular-loading-bar'),
 	require('angular-chart.js')
@@ -28,4 +29,20 @@ app.config(['$resourceProvider', function($resourceProvider) {
 // App configuration
 app.constant('config', {
 	rest_url: 'http://localhost:9090'
+});
+
+// App routes
+app.config(function($stateProvider, $urlRouterProvider) {
+
+	//$urlRouterProvider.otherwise('/');
+
+	$stateProvider
+		.state('main', {
+			url: '/',
+			templateUrl: 'view/main.html'
+		})
+		.state('opcua_servers', {
+			url: '/opcua_servers/:serverId',
+			templateUrl: 'view/opcua_servers.html'
+		});
 });

@@ -1,0 +1,47 @@
+<div ng-controller="OPCUA_Server_Ctrl as vm">
+
+	<div class="jumbotron jumbotron-fluid jumbotron-custom">
+		<div class="container">
+			<h2>Server: {{vm.getServer().endpoint}}</h2>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-2 col-md-3 col-xs-4">
+				<label>Subscription</label>
+				<div class="btn-group" uib-dropdown dropdown-append-to-body>
+					<button id="btn-append-to-body" type="button" class="btn btn-primary" uib-dropdown-toggle>
+						OPC UA Subscriptions <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-body">
+						<li ng-repeat="subscription in vm.subscriptions">
+							<a ng-click="vm.selectSubscription(subscription.identifier)">{{subscription.identifier}}</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-3 col-xs-4">
+				<label>DateTime</label>
+				<div class="input-group">
+					<input type="text" class="form-control" uib-datepicker-popup="dd.MM.yyyy" ng-model="vm.dateFrom.date" is-open="vm.dateFrom.opened" datepicker-options="vm.dateFrom.options" close-text="Close"/>
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="vm.dateFromOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<canvas id="line"
+			class="chart chart-line"
+			chart-data="vm.chart.data"
+			chart-labels="vm.chart.labels"
+			chart-series="vm.chart.series"
+			chart-options="vm.chart.options"
+			chart-dataset-override="vm.chart.datasetoverride"
+			chart-click="vm.chartClick">
+	</canvas>
+
+
+</div>

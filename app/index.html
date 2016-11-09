@@ -6,33 +6,43 @@
 
 		<!-- Stylesheets -->
 		<link rel="stylesheet" href="./css/bootstrap.min.css">
+		<link rel="stylesheet" href="./css/style.css">
 	</head>
 	<body ng-app="app">
 
-		<div ng-controller="OPCUA_Server_Ctrl as vm">
-
-			<span uib-dropdown>
-				<a href id="simple-dropdown" uib-dropdown-toggle>
-					Test Dropdown
-				</a>
-				<ul class="dropdown-menu" uib-dropdown-menu arial-labelledby="simple-dropdown">
-					<li ng-repeat="server in vm.servers">
-						<a href>{{server.endpoint}}</a>
-					</li>
-				</ul>
-			</span>
-
-			<!--<canvas
-				id="line"
-				class="chart chart-line"
-				chart-data="data"
-				chart-labels="labels"
-				chart-series="series"
-				chart-options="options"
-				chart-dataset-override="datasetOverride"
-				chart-click="onClick">
-			</canvas>-->
+		<!-- Navigation bar -->
+		<div ng-controller="Navbar_Ctrl as vm">
+			<nav class="navbar navbar-default">
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse-data" aria-expanded="false">
+							<span class="sr-only">Toggle</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a href="#/" class="navbar-brand">IoT Frontend</a>
+					</div>
+					<div class="collapse navbar-collapse navbar-collapse-data">
+						<ul class="nav navbar-nav navbar-left">
+							<li class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+									OPC UA Servers <span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu">
+									<li ng-repeat="server in vm.servers">
+										<a href="#opcua_servers/{{server.serverId}}">{{server.endpoint}}</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</nav>
 		</div>
+
+		<!-- App routes -->
+		<ui-view></ui-view>
 
 		<!-- Javascript includes -->
 		<script src="./scripts/bundle.js"></script>
