@@ -12,7 +12,7 @@
 
 		<!-- Navigation bar -->
 		<div ng-controller="Navbar_Ctrl as vm">
-			<nav class="navbar navbar-default">
+			<nav class="navbar navbar-inverse">
 				<div class="container">
 					<div class="navbar-header">
 						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse-data" aria-expanded="false">
@@ -21,17 +21,27 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a href="#/" class="navbar-brand">IoT Frontend</a>
+						<a href="#/" class="navbar-brand">OPC UA Visualizer</a>
 					</div>
 					<div class="collapse navbar-collapse navbar-collapse-data">
 						<ul class="nav navbar-nav navbar-left">
 							<li class="dropdown">
 								<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-									OPC UA Servers <span class="caret"></span>
+									Server list <span class="caret"></span>
 								</a>
 								<ul class="dropdown-menu">
 									<li ng-repeat="server in vm.servers">
-										<a href="#opcua_servers/{{server.serverId}}">{{server.endpoint}}</a>
+										<a href="#opcua_servers/{{server.serverId}}">ServerId({{server.serverId}}): {{server.endpoint}}</a>
+									</li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+									Subscription list <span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu">
+									<li ng-repeat="subscription in vm.subscriptions">
+										<a href="#/">ServerId({{subscription.serverId}}): {{subscription.identifier}}</a>
 									</li>
 								</ul>
 							</li>

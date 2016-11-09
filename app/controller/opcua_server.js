@@ -29,7 +29,7 @@ module.exports = function(
 		opened: false
 	};
 
-	vm.dateFrom.date.setDate(vm.dateFrom.date.getDate() - 2);
+	vm.dateFrom.date.setMinutes(vm.dateFrom.date.getMinutes() - 1.0);
 
 	vm.dateFromOpen = function($event) {
 		$event.preventDefault();
@@ -60,13 +60,15 @@ module.exports = function(
 				yAxisID: 'y-axis-1'
 			}
 		],
-		labels: ["January", "February", "March", "April", "May", "June", "July"],
-		data: [65, 59, 80, 81, 56, 55, 40]
+		labels: [],
+		data: [[]]
 	};
 
 	vm.chartClick = function(points, evt) {
 		$log.debug('opcua_server.ctrl - chart-click, points: ' + points + ', event: ' + evt);
 	};
+
+	Chart.defaults.global.colors = ['#46BFBD', '#00ADF9', '#DCDCDC', '#803690', '#FDB45C', '#949FB1', '#4D5360']
 
 	// Controller resources
 	vm.server = OPCUA_Server_Srvce.OPCUA_Server;
@@ -157,25 +159,23 @@ module.exports = function(
 					$log.debug('opcua_server.ctrl - Destroying existing chart...');
 
 					vm.chart.labels = [];
-					vm.chart.data = [];
-					vm.chart.series = vm.filterSub.selected.identifier;
+					vm.chart.data = [[]];
+					vm.chart.series = [vm.filterSub.selected.identifier];
 
 					$log.debug('opcua_server.ctrl - Converting variable data to for the chart...');
 
-					var f = 0.0;
 					for (var i = 0; i < vm.variables.length; i++) {
 						var variable = vm.variables[i];
 						if (variable.serverId != vm.filterSub.selected.serverId || variable.identifier != vm.filterSub.selected.identifier)
 							continue;
 
-						vm.chart.labels.push(f);
+						vm.chart.labels.push(new Date(variable.serverTimeStamp).toISOString());
 
 						if (variable.value == 'true' || variable.value == 'false') {
-							vm.chart.data.push(variable.value == 'true' ? 1 : 0);
+							vm.chart.data[0].push(variable.value == 'true' ? 1 : 0);
 						} else {
-							vm.chart.data.push(parseFloat(variable.value));
+							vm.chart.data[0].push(parseFloat(variable.value));
 						}
-						f += 0.1;
 					}
 
 					$log.debug('opcua_server.ctrl - Variable data conversion for chart completed.');
