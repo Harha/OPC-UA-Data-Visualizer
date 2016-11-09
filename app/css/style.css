@@ -1,10 +1,11 @@
-/* Configure bootstrap navbar */
-/*.navbar {
-	margin-bottom: 0px;
-}*/
+/* OPC UA Data Visualizer filter section */
+.visualizer-filter-section {
+	padding-bottom: 32px;
+}
 
-/* Configure bootstrap jumbotron */
-/*.jumbotron-custom {
-	margin-top: 0px;
-	border-radius: 0px;
-}*/
+/* OPC UA Data Visualizer chart section */
+.visualizer-chart-section {
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000000;
+}
