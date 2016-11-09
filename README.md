@@ -1,4 +1,4 @@
-OPC UA Visualizer
+OPC UA Data Visualizer
 =================
 
 Tool for visualizing OPC UA data.
