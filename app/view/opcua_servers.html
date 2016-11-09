@@ -6,7 +6,7 @@
 				<label>Filter, Subscription</label>
 				<div class="btn-group" uib-dropdown dropdown-append-to-body>
 					<button id="btn-append-to-body" type="button" class="btn btn-primary" uib-dropdown-toggle>
-						{{vm.filterSub.selected != null ? vm.filterSub.selected.identifier : 'OPC UA Subscriptions'}} <span class="caret"></span>
+						{{vm.filter.subscriptions.length > 0 ? vm.filter.subscriptions[vm.filter.subscriptions.length - 1].identifier : 'OPC UA Subscriptions'}} <span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-body">
 						<li ng-repeat="subscription in vm.subscriptions">
@@ -18,9 +18,17 @@
 			<div class="col-lg-2 col-md-3 col-xs-4">
 				<label>Filter, FromDateTime</label>
 				<div class="input-group">
-					<input type="text" class="form-control" uib-datepicker-popup="dd.MM.yyyy" ng-model="vm.dateFrom.date" is-open="vm.dateFrom.opened" datepicker-options="vm.dateFrom.options" close-text="Close"/>
+					<input type="text" class="form-control" uib-datepicker-popup="dd.MM.yyyy" ng-model="vm.filter.dateFrom.date" is-open="vm.filter.dateFrom.opened" datepicker-options="vm.filter.dateFrom.options" close-text="Close"/>
 					<span class="input-group-btn">
-						<button type="button" class="btn btn-default" ng-click="vm.dateFromOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+						<button type="button" class="btn btn-default" ng-click="vm.openDateFrom()"><i class="glyphicon glyphicon-calendar"></i></button>
+					</span>
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-3 col-xs-4">
+				<label>Filter, Apply</label>
+				<div class="input-group">
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-success" ng-click="vm.applyFilter()">Apply filter</button>
 					</span>
 				</div>
 			</div>

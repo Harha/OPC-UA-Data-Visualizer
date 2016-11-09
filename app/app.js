@@ -28,7 +28,7 @@ app.config(['$resourceProvider', function($resourceProvider) {
 
 // App configuration
 app.constant('config', {
-	rest_url: 'http://localhost:9090'
+	rest_url: 'http://harha.us.to:9090'
 });
 
 // App routes

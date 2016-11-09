@@ -8,72 +8,120 @@ module.exports = function(
 	// Controller instance
 	var vm = this;
 
-	// Filter variables, subscriptions
-	vm.filterSub = {
-		selected: null
-	};
-
-	vm.selectSubscription = function(identifier) {
-		$log.debug('opcua_server.ctrl - Filter, selected subscription: ' + identifier);
-		vm.filterSub.selected = vm.getSubscription(identifier);
-		vm.initializeData();
-	};
-
-	// Filter variables, datetime
-	vm.dateFrom = {
-		date: new Date(),
-		options: {
-			minDate: new Date('2016-01-01'),
-			showWeeks: true
-		},
-		opened: false
-	};
-
-	vm.dateFrom.date.setMinutes(vm.dateFrom.date.getMinutes() - 1.0);
-
-	vm.dateFromOpen = function($event) {
-		$event.preventDefault();
-		$event.stopPropagation();
-		vm.dateFrom.opened = true;
-		vm.initializeData();
-	};
-
-	// Chart variables
-	vm.chart = {
-		series: [
-			'Series A'
-		],
-		options: {
-			scales: {
-				yAxes: [
-					{
-						id: 'y-axis-1',
-						type: 'linear',
-						display: true,
-						position: 'left'
-					}
-				]
-			}
-		},
-		datasetoverride: [
-			{
-				yAxisID: 'y-axis-1'
-			}
-		],
-		labels: [],
-		data: [[]]
-	};
-
-	vm.chartClick = function(points, evt) {
-		$log.debug('opcua_server.ctrl - chart-click, points: ' + points + ', event: ' + evt);
-	};
-
-	Chart.defaults.global.colors = ['#46BFBD', '#00ADF9', '#DCDCDC', '#803690', '#FDB45C', '#949FB1', '#4D5360']
-
 	// Controller resources
 	vm.server = OPCUA_Server_Srvce.OPCUA_Server;
 	vm.subscription = OPCUA_Subscription_Srvce.OPCUA_Subscription;
 	vm.variable = OPCUA_Variable_Srvce.OPCUA_Variable;
+
+	// Query filter object
+	vm.filter = {
+		subscriptions: [],
+		dateFrom: {
+			date: new Date(),
+			options: {
+				minDate: new Date('2016-01-01'),
+				showWeeks: true
+			},
+			opened: false
+		}
+	};
+
+	// Filter, apply changes
+	vm.applyFilter = function() {
+		vm.initializeData();
+		vm.cleanChart();
+	};
+
+	// Filter, add subscription
+	vm.selectSubscription = function(identifier) {
+		var subscription = vm.getSubscription(identifier);
+		vm.filter.subscriptions.push(subscription);
+		vm.addVariableToChart(subscription);
+	};
+
+	// Filter, clean subscriptions
+	vm.cleanSubscriptions = function() {
+		vm.filter.subscriptions = [];
+	};
+
+	// Filter, open dateFrom
+	vm.openDateFrom = function() {
+		vm.filter.dateFrom.opened = true;
+	};
+
+	// Chart object
+	vm.chart = {
+		series: [],
+		options: {
+			scales: {
+				yAxes: []
+			}
+		},
+		datasetoverride: [],
+		labels: [],
+		data: [] // Array of datasets
+	};
+
+	// Chart, colors
+	Chart.defaults.global.colors = ['#46BFBD', '#00ADF9', '#DCDCDC', '#803690', '#FDB45C', '#949FB1', '#4D5360'];
+
+	// Chart, click
+	vm.clickChart = function(points, evt) {
+		$log.debug('opcua_server.ctrl - chart-click, points: ' + JSON.stringify(points) + ', event: ' + JSON.stringify(evt));
+	};
+
+	// Chart, clean
+	vm.cleanChart = function() {
+		vm.chart.series = [];
+		vm.chart.options.scales.yAxes = [];
+		vm.chart.datasetoverride = [];
+		vm.chart.labels = [];
+		vm.chart.data = [];
+	};
+
+	// Add a variable to the chart
+	vm.addVariableToChart = function(variable) {
+
+		// Add series
+		vm.chart.series.push(variable.identifier);
+
+		// Axis count
+		var n_axes = vm.chart.options.scales.yAxes.length;
+
+		// Add axis
+		vm.chart.options.scales.yAxes.push({
+			id: 'y-axis-' + n_axes,
+			type: 'linear',
+			display: true,
+			position: 'left'
+		});
+
+		// Add dataset identifier
+		vm.chart.datasetoverride.push({
+			yAxisID: 'y-axis-' + n_axes
+		});
+
+		// Add new array to data
+		vm.chart.data.push([]);
+
+		// Add labels and data (x and y)
+		for (var i = 0; i < vm.variables.length; i++) {
+			var var_new = vm.variables[i];
+
+			if (var_new.serverId != variable.serverId || var_new.identifier != variable.identifier)
+				continue;
+			
+			if (n_axes <= 0)
+				vm.chart.labels.push(new Date(var_new.serverTimeStamp).toISOString());
+
+			if (var_new.value == 'true' || var_new.value == 'false') {
+				vm.chart.data[n_axes].push(var_new.value == 'true' ? 1 : 0);
+			} else {
+				vm.chart.data[n_axes].push(parseFloat(var_new.value));
+			}
+		}
+
+	};
 
 	// Fetch servers from REST
 	vm.getServers = function() {
@@ -134,7 +182,7 @@ module.exports = function(
 
 		vm.variable.get({
 			serverId: ($stateParams.serverId) ? $stateParams.serverId : null,
-			serverTimeStamp: vm.dateFrom.date.toISOString()
+			serverTimeStamp: vm.filter.dateFrom.date.toISOString()
 		}, function(variables) {
 			vm.variables = variables;
 			d.resolve(vm.variables);
@@ -143,46 +191,17 @@ module.exports = function(
 		return d.promise;
 	};
 
+	// Initialize filter
+	vm.filter.dateFrom.date.setMinutes(vm.filter.dateFrom.date.getMinutes() - 1.0);
+
 	// Initialize data
 	vm.initializeData = function() {
-		vm.getServers().then(function(servers) {
-			vm.getSubscriptions().then(function(subscriptions) {
-				vm.getVariables().then(function(variables) {
-					$log.debug('opcua_server.ctrl - Fetched all data from REST.\n' +
-								'servers:' + servers.length 				+ '\n' +
-								'subscriptions: ' + subscriptions.length	+ '\n' +
-								'variables: ' + variables.length);
-
-					if (vm.filterSub.selected == null)
-						return;
-
-					$log.debug('opcua_server.ctrl - Destroying existing chart...');
-
-					vm.chart.labels = [];
-					vm.chart.data = [[]];
-					vm.chart.series = [vm.filterSub.selected.identifier];
-
-					$log.debug('opcua_server.ctrl - Converting variable data to for the chart...');
-
-					for (var i = 0; i < vm.variables.length; i++) {
-						var variable = vm.variables[i];
-						if (variable.serverId != vm.filterSub.selected.serverId || variable.identifier != vm.filterSub.selected.identifier)
-							continue;
-
-						vm.chart.labels.push(new Date(variable.serverTimeStamp).toISOString());
-
-						if (variable.value == 'true' || variable.value == 'false') {
-							vm.chart.data[0].push(variable.value == 'true' ? 1 : 0);
-						} else {
-							vm.chart.data[0].push(parseFloat(variable.value));
-						}
-					}
-
-					$log.debug('opcua_server.ctrl - Variable data conversion for chart completed.');
-				});
-			});
-		});
+		vm.getServers();
+		vm.getSubscriptions();
+		vm.getVariables();
 	};
+
+	// Initially load data using default filter
 	vm.initializeData();
 
 };
