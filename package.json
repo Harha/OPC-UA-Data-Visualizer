@@ -1,7 +1,7 @@
 {
-  "name": "iot_frontend",
+  "name": "opc_ua_data_visualizer",
   "version": "0.0.1",
-  "description": "Frontend for IoT Project. Visualizes OPC UA data.",
+  "description": "Frontend for OPC UA Data Gateway. Visualizes OPC UA data.",
   "main": "./app/app.js",
   "browser": {
     "jquery": "./node_modules/jquery/dist/jquery.js",
