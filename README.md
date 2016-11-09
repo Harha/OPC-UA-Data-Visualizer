@@ -1,19 +1,28 @@
-Frontend Project
-===============
+OPC UA Visualizer
+=================
+
+Tool for visualizing OPC UA data.
+
+Related projects
+----------------
+Backend project: [OPC UA Data REST](https://github.com/Harha/OPC-UA-Data-REST)
+
+Gateway project: [OPC UA Data Gateway](https://github.com/Harha/OPC-UA-Data-Gateway)
 
 Build tools (install globally, 'npm install package -g')
 -----------
-- npm			(v3.8.9)
-- Browserify	(v13.1.0)
-- Uglifyjs		(v2.7.4)
+- npm
 - rimraf
-- cpx			(v1.5.0)
+- cpx
 
 Build tasks
 -----------
-- clean
+- clean			(cleans ./dist folder)
 - build:js
 - build:html
 - build:css
+- build:fonts
 - uglify:js
-- build
+- build:dev		(development build)
+- build:prod	(production build, uglified)
+- serve			(development server, localhost:8080/dist/)
