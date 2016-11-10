@@ -1,19 +1,23 @@
 // jQuery & Bootstrap
-$ = jQuery = require('jquery');
+var jquery = require('jquery');
 var bootstrap = require('bootstrap');
 
 // Angular instance
 var angular = require('angular');
+
+// Angular datetime picker
+require('angularjs-datetime-picker');
 
 // App instance
 var app = angular.module('app', [
 	// Angular includes
 	require('angular-resource'),
 	require('angular-animate'),
+	require('angular-touch'),
 	// 3rd party includes
 	require('angular-ui-router'),
 	require('angular-ui-bootstrap'),
-	require('angular-loading-bar'),
+	'angularjs-datetime-picker',
 	require('angular-chart.js')
 ]);
 

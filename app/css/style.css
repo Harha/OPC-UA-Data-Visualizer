@@ -1,11 +1,29 @@
+body {
+	background-color: #EEEEEE;
+}
+
 /* OPC UA Data Visualizer filter section */
 .visualizer-filter-section {
-	padding-bottom: 32px;
+	padding: 16px;
+	margin-bottom: 16px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #AAAAAA;
+	background-color: #FFFFFF;
 }
 
 /* OPC UA Data Visualizer chart section */
 .visualizer-chart-section {
+	padding: 16px;
+	margin-top: 16px;
 	border-style: solid;
 	border-width: 1px;
-	border-color: #000000;
+	border-color: #AAAAAA;
+	background-color: #FFFFFF;
+}
+
+/* OPC UA Data Visualizer section headers */
+.visualizer-section-header {
+	font-weight: bold;
+	color: #777777;
 }

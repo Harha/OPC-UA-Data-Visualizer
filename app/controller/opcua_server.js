@@ -13,16 +13,17 @@ module.exports = function(
 	vm.subscription = OPCUA_Subscription_Srvce.OPCUA_Subscription;
 	vm.variable = OPCUA_Variable_Srvce.OPCUA_Variable;
 
+	// State variables
+	vm.update = false;
+
 	// Query filter object
 	vm.filter = {
 		subscriptions: [],
 		dateFrom: {
-			date: new Date(),
-			options: {
-				minDate: new Date('2016-01-01'),
-				showWeeks: true
-			},
-			opened: false
+			date: new Date()
+		},
+		dateTo: {
+			date: new Date()
 		}
 	};
 
@@ -32,21 +33,11 @@ module.exports = function(
 		vm.cleanChart();
 	};
 
-	// Filter, add subscription
-	vm.selectSubscription = function(identifier) {
-		var subscription = vm.getSubscription(identifier);
-		vm.filter.subscriptions.push(subscription);
-		vm.addVariableToChart(subscription);
-	};
-
-	// Filter, clean subscriptions
-	vm.cleanSubscriptions = function() {
-		vm.filter.subscriptions = [];
-	};
-
-	// Filter, open dateFrom
-	vm.openDateFrom = function() {
-		vm.filter.dateFrom.opened = true;
+	// Filter, clear changes
+	vm.clearFilter = function() {
+		vm.filter.dateFrom.date = new Date();
+		vm.filter.dateFrom.date.setMinutes(vm.filter.dateFrom.date.getMinutes() - 1.0);
+		vm.filter.dateTo.date = new Date();
 	};
 
 	// Chart object
@@ -79,7 +70,7 @@ module.exports = function(
 		vm.chart.data = [];
 	};
 
-	// Add a variable to the chart
+	// Chart Add a variable
 	vm.addVariableToChart = function(variable) {
 
 		// Add series
@@ -111,8 +102,16 @@ module.exports = function(
 			if (var_new.serverId != variable.serverId || var_new.identifier != variable.identifier)
 				continue;
 			
-			if (n_axes <= 0)
-				vm.chart.labels.push(new Date(var_new.serverTimeStamp).toISOString());
+			if (n_axes <= 0) {
+				var serverTimeStamp = new Date(var_new.serverTimeStamp).toISOString();
+				var filterDateDiff = Math.abs(vm.filter.dateFrom.date.getTime() - vm.filter.dateTo.date.getTime());
+				var filterDateDiffDays = Math.ceil(filterDateDiff / (1000 * 3600 * 24));
+				if (filterDateDiffDays > 1.0) {
+					vm.chart.labels.push(serverTimeStamp.slice(0, serverTimeStamp.length - 5).replace('T', ' '));
+				} else {
+					vm.chart.labels.push(serverTimeStamp.slice(11, serverTimeStamp.length - 1));
+				}
+			}
 
 			if (var_new.value == 'true' || var_new.value == 'false') {
 				vm.chart.data[n_axes].push(var_new.value == 'true' ? 1 : 0);
@@ -176,6 +175,18 @@ module.exports = function(
 		}
 	};
 
+	// Monitoring, add subscription
+	vm.selectSubscription = function(identifier) {
+		var subscription = vm.getSubscription(identifier);
+		vm.filter.subscriptions.push(subscription);
+		vm.addVariableToChart(subscription);
+	};
+
+	// Monitoring, clear subscriptions
+	vm.cleanSubscriptions = function() {
+		vm.filter.subscriptions = [];
+	};
+
 	// Fetch server variables
 	vm.getVariables = function() {
 		var d = $q.defer();
@@ -192,7 +203,7 @@ module.exports = function(
 	};
 
 	// Initialize filter
-	vm.filter.dateFrom.date.setMinutes(vm.filter.dateFrom.date.getMinutes() - 1.0);
+	vm.clearFilter();
 
 	// Initialize data
 	vm.initializeData = function() {
