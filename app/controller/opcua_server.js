@@ -31,6 +31,7 @@ module.exports = function(
 	vm.applyFilter = function() {
 		vm.initializeData();
 		vm.cleanChart();
+		vm.cleanSubscriptions();
 	};
 
 	// Filter, clear changes
@@ -70,7 +71,50 @@ module.exports = function(
 		vm.chart.data = [];
 	};
 
-	// Chart Add a variable
+	// Chart, update variables
+	vm.updateChart = function() {
+		vm.filter.dateFrom.date = vm.filter.dateTo.date;
+		vm.filter.dateTo.date = new Date();
+
+		vm.getVariables().then(function(results) {
+
+			for (var i = 0; i < vm.filter.subscriptions.length; i++) {
+				var variable = vm.getVariable(vm.filter.subscriptions[i].identifier);
+
+				if (variable == null)
+					continue;
+
+				for (var j = 0; j < results.length; j++) {
+					var var_new = results[j];
+
+					if (var_new.serverId != variable.serverId || var_new.identifier != variable.identifier)
+						continue;
+
+					vm.chart.data[i].shift();
+					if (var_new.value == 'true' || var_new.value == 'false') {
+						vm.chart.data[i].push(var_new.value == 'true' ? 1 : 0);
+					} else {
+						vm.chart.data[i].push(parseFloat(var_new.value));
+					}
+
+					if (i <= 0) {
+						vm.chart.labels.shift();
+						var serverTimeStamp = new Date(var_new.serverTimeStamp).toISOString();
+						var filterDateDiff = Math.abs(vm.filter.dateFrom.date.getTime() - vm.filter.dateTo.date.getTime());
+						var filterDateDiffDays = Math.ceil(filterDateDiff / (1000 * 3600 * 24));
+						if (filterDateDiffDays > 1.0) {
+							vm.chart.labels.push(serverTimeStamp.slice(0, serverTimeStamp.length - 5).replace('T', ' '));
+						} else {
+							vm.chart.labels.push(serverTimeStamp.slice(11, serverTimeStamp.length - 1));
+						}
+					}
+				}
+			}
+
+		});
+	};
+
+	// Chart, add a variable
 	vm.addVariableToChart = function(variable) {
 
 		// Add series
@@ -173,6 +217,8 @@ module.exports = function(
 			if (subscription.serverId == serverId && subscription.identifier == identifier)
 				return subscription;
 		}
+
+		return null;
 	};
 
 	// Monitoring, add subscription
@@ -193,13 +239,29 @@ module.exports = function(
 
 		vm.variable.get({
 			serverId: ($stateParams.serverId) ? $stateParams.serverId : null,
-			serverTimeStamp: vm.filter.dateFrom.date.toISOString()
+			serverTimeStampFrom: vm.filter.dateFrom.date.toISOString(),
+			serverTimeStampTo: vm.filter.dateTo.date.toISOString()
 		}, function(variables) {
 			vm.variables = variables;
 			d.resolve(vm.variables);
 		});
 
 		return d.promise;
+	};
+
+	// Get variable by identifier
+	vm.getVariable = function(identifier) {
+		if (vm.variables == null)
+			return null;
+
+		var serverId = $stateParams.serverId;
+		for (var i = 0; i < vm.variables.length; i++) {
+			var variable = vm.variables[i];
+			if (variable.serverId == serverId && variable.identifier == identifier)
+				return variable;
+		}
+
+		return null;
 	};
 
 	// Initialize filter
