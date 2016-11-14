@@ -5,38 +5,26 @@ module.exports = function($scope, $q, OPCUA_Server_Srvce, OPCUA_Subscription_Srv
 	// Controller instance
 	var vm = this;
 
-	// Controller resources
-	vm.server = OPCUA_Server_Srvce.OPCUA_Server;
-	vm.subscription = OPCUA_Subscription_Srvce.OPCUA_Subscription;
+	// ------------------------------------------------------------------------
+	// -- Data section
+	// ------------------------------------------------------------------------
 
-	// Fetch servers from REST
+	// DATA, get servers
 	vm.getServers = function() {
-		var d = $q.defer();
-
-		vm.server.get({
-		}, function(servers) {
-			vm.servers = servers;
-			d.resolve(vm.servers);
-		});
-
-		return d.promise;
+		return OPCUA_Server_Srvce.servers;
 	};
 
-	// Fetch subscriptions from REST
+	// DATA, get subscriptions
 	vm.getSubscriptions = function() {
-		var d = $q.defer();
-
-		vm.subscription.get({
-		}, function(subscriptions) {
-			vm.subscriptions = subscriptions;
-			d.resolve(vm.subscriptions);
-		});
-
-		return d.promise;
+		return OPCUA_Subscription_Srvce.subscriptions;
 	};
 
-	// Initialize data
-	vm.getServers();
-	vm.getSubscriptions();
+	// ------------------------------------------------------------------------
+	// -- Init section
+	// ------------------------------------------------------------------------
+
+	// REST, download data
+	OPCUA_Server_Srvce.fetchServers();
+	OPCUA_Subscription_Srvce.fetchSubscriptions(null, null, null);
 
 };

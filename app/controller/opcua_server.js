@@ -8,17 +8,31 @@ module.exports = function(
 	// Controller instance
 	var vm = this;
 
-	// Controller resources
-	vm.server = OPCUA_Server_Srvce.OPCUA_Server;
-	vm.subscription = OPCUA_Subscription_Srvce.OPCUA_Subscription;
-	vm.variable = OPCUA_Variable_Srvce.OPCUA_Variable;
+	// ------------------------------------------------------------------------
+	// -- Data section
+	// ------------------------------------------------------------------------
 
-	// State variables
-	vm.update = false;
+	// DATA, get servers
+	vm.getServers = function() {
+		return OPCUA_Server_Srvce.servers;
+	};
 
-	// Query filter object
+	// DATA, get subscriptions
+	vm.getSubscriptions = function() {
+		return OPCUA_Subscription_Srvce.subscriptions;
+	};
+
+	// DATA, get variables
+	vm.getVariables = function() {
+		return OPCUA_Variable_Srvce.variables;
+	};
+
+	// ------------------------------------------------------------------------
+	// -- Filter section
+	// ------------------------------------------------------------------------
+
+	// Filter, js object
 	vm.filter = {
-		subscriptions: [],
 		dateFrom: {
 			date: new Date()
 		},
@@ -27,21 +41,14 @@ module.exports = function(
 		}
 	};
 
-	// Filter, apply changes
-	vm.applyFilter = function() {
-		vm.initializeData();
-		vm.cleanChart();
-		vm.cleanSubscriptions();
-	};
+	// ------------------------------------------------------------------------
+	// -- Chart section
+	// ------------------------------------------------------------------------
 
-	// Filter, clear changes
-	vm.clearFilter = function() {
-		vm.filter.dateFrom.date = new Date();
-		vm.filter.dateFrom.date.setMinutes(vm.filter.dateFrom.date.getMinutes() - 1.0);
-		vm.filter.dateTo.date = new Date();
-	};
+	// Chart, configuration
+	Chart.defaults.global.colors = ['#46BFBD', '#00ADF9', '#DCDCDC', '#803690', '#FDB45C', '#949FB1', '#4D5360'];
 
-	// Chart object
+	// Chart, js object
 	vm.chart = {
 		series: [],
 		options: {
@@ -51,11 +58,8 @@ module.exports = function(
 		},
 		datasetoverride: [],
 		labels: [],
-		data: [] // Array of datasets
+		data: []
 	};
-
-	// Chart, colors
-	Chart.defaults.global.colors = ['#46BFBD', '#00ADF9', '#DCDCDC', '#803690', '#FDB45C', '#949FB1', '#4D5360'];
 
 	// Chart, click
 	vm.clickChart = function(points, evt) {
@@ -71,8 +75,8 @@ module.exports = function(
 		vm.chart.data = [];
 	};
 
-	// Chart, update variables
-	vm.updateChart = function() {
+	// Chart, update
+	/*vm.updateChart = function() {
 		vm.filter.dateFrom.date = vm.filter.dateTo.date;
 		vm.filter.dateTo.date = new Date();
 
@@ -112,10 +116,10 @@ module.exports = function(
 			}
 
 		});
-	};
+	};*/
 
 	// Chart, add a variable
-	vm.addVariableToChart = function(variable) {
+	/*vm.addVariableToChart = function(variable) {
 
 		// Add series
 		vm.chart.series.push(variable.identifier);
@@ -164,117 +168,14 @@ module.exports = function(
 			}
 		}
 
-	};
+	};*/
 
-	// Fetch servers from REST
-	vm.getServers = function() {
-		var d = $q.defer();
+	// ------------------------------------------------------------------------
+	// -- Init section
+	// ------------------------------------------------------------------------
 
-		vm.server.get({
-		}, function(servers) {
-			vm.servers = servers;
-			d.resolve(vm.servers);
-		});
-
-		return d.promise;
-	};
-
-	// Get current server
-	vm.getServer = function() {
-		if (vm.servers == null)
-			return null;
-
-		var serverId = $stateParams.serverId;
-		for (var i = 0; i < vm.servers.length; i++) {
-			var server = vm.servers[i];
-			if (server.serverId == serverId)
-				return server;
-		}
-	};
-
-	// Fetch subscriptions from REST
-	vm.getSubscriptions = function() {
-		var d = $q.defer();
-
-		vm.subscription.get({
-			serverId: ($stateParams.serverId) ? $stateParams.serverId : null
-		}, function(subscriptions) {
-			vm.subscriptions = subscriptions;
-			d.resolve(vm.subscriptions);
-		});
-
-		return d.promise;
-	};
-
-	// Get subscription by identifier
-	vm.getSubscription = function(identifier) {
-		if (vm.subscriptions == null)
-			return null;
-
-		var serverId = $stateParams.serverId;
-		for (var i = 0; i < vm.subscriptions.length; i++) {
-			var subscription = vm.subscriptions[i];
-			if (subscription.serverId == serverId && subscription.identifier == identifier)
-				return subscription;
-		}
-
-		return null;
-	};
-
-	// Monitoring, add subscription
-	vm.selectSubscription = function(identifier) {
-		var subscription = vm.getSubscription(identifier);
-		vm.filter.subscriptions.push(subscription);
-		vm.addVariableToChart(subscription);
-	};
-
-	// Monitoring, clear subscriptions
-	vm.cleanSubscriptions = function() {
-		vm.filter.subscriptions = [];
-	};
-
-	// Fetch server variables
-	vm.getVariables = function() {
-		var d = $q.defer();
-
-		vm.variable.get({
-			serverId: ($stateParams.serverId) ? $stateParams.serverId : null,
-			serverTimeStampFrom: vm.filter.dateFrom.date.toISOString(),
-			serverTimeStampTo: vm.filter.dateTo.date.toISOString()
-		}, function(variables) {
-			vm.variables = variables;
-			d.resolve(vm.variables);
-		});
-
-		return d.promise;
-	};
-
-	// Get variable by identifier
-	vm.getVariable = function(identifier) {
-		if (vm.variables == null)
-			return null;
-
-		var serverId = $stateParams.serverId;
-		for (var i = 0; i < vm.variables.length; i++) {
-			var variable = vm.variables[i];
-			if (variable.serverId == serverId && variable.identifier == identifier)
-				return variable;
-		}
-
-		return null;
-	};
-
-	// Initialize filter
-	vm.clearFilter();
-
-	// Initialize data
-	vm.initializeData = function() {
-		vm.getServers();
-		vm.getSubscriptions();
-		vm.getVariables();
-	};
-
-	// Initially load data using default filter
-	vm.initializeData();
+	// REST, download data
+	OPCUA_Server_Srvce.fetchServers();
+	OPCUA_Subscription_Srvce.fetchSubscriptions(null, null, $stateParams.serverId);
 
 };

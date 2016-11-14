@@ -1,12 +1,9 @@
-// jQuery & Bootstrap
+// Non-angular includes
 var jquery = require('jquery');
 var bootstrap = require('bootstrap');
 
 // Angular instance
 var angular = require('angular');
-
-// Angular datetime picker
-require('angularjs-datetime-picker');
 
 // App instance
 var app = angular.module('app', [
@@ -17,13 +14,13 @@ var app = angular.module('app', [
 	// 3rd party includes
 	require('angular-ui-router'),
 	require('angular-ui-bootstrap'),
-	'angularjs-datetime-picker',
 	require('angular-chart.js')
 ]);
 
 // App includes
 require('./controller');
 require('./service');
+require('./directive');
 
 // App resource provider
 app.config(['$resourceProvider', function($resourceProvider) {
@@ -32,7 +29,7 @@ app.config(['$resourceProvider', function($resourceProvider) {
 
 // App configuration
 app.constant('config', {
-	rest_url: 'http://localhost:9090'
+	rest_url: 'http://harha.us.to:9090'
 });
 
 // App routes
@@ -45,8 +42,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
 			url: '/',
 			templateUrl: 'view/main.html'
 		})
-		.state('opcua_servers', {
-			url: '/opcua_servers/:serverId',
-			templateUrl: 'view/opcua_servers.html'
+		.state('opcua_server', {
+			url: '/opcua_server/:serverId',
+			templateUrl: 'view/opcua_server.html'
 		});
 });
