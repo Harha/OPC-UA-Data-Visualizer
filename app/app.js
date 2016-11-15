@@ -29,7 +29,8 @@ app.config(['$resourceProvider', function($resourceProvider) {
 
 // App configuration
 app.constant('config', {
-	rest_url: 'http://harha.us.to:9090'
+	rest_url: 'http://harha.us.to:9090',
+	serv_url: 'http://harha.us.to:9091'
 });
 
 // App routes
@@ -41,6 +42,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
 		.state('main', {
 			url: '/',
 			templateUrl: 'view/main.html'
+		})
+		.state('opcua_settings', {
+			url: '/opcua_settings',
+			templateUrl: 'view/opcua_settings.html'
 		})
 		.state('opcua_server', {
 			url: '/opcua_server/:serverId',

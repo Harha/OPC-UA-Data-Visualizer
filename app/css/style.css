@@ -3,6 +3,23 @@ body {
 }
 
 /* OPC UA Data Visualizer filter section */
+.visualizer-settings-section {
+	padding: 16px;
+	margin-bottom: 16px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #AAAAAA;
+	background-color: #FFFFFF;
+}
+
+.visualizer-settings-section label {
+	padding: 0px;
+	margin: 0px;
+	margin-top: 8px;
+	white-space: nowrap;
+}
+
+/* OPC UA Data Visualizer filter section */
 .visualizer-filter-section {
 	padding: 16px;
 	margin-bottom: 16px;

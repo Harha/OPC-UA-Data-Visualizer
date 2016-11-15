@@ -9,9 +9,19 @@
 				<p class="visualizer-section-header">Filtering</p>
 			</div>
 
+			<!-- Filter, actions -->
+			<div class="col-xs-1">
+				<label>Actions</label>
+				<div class="input-group btn-group" role="group">
+					<button type="button" class="btn btn-warning" ng-click="vm.resetFilter()">
+						Reset <i class="glyphicon glyphicon-remove"></i>
+					</button>
+				</div>
+			</div>
+
 			<!-- Filter, select date range start -->
-			<div class="col-xs-6">
-				<label>Filter - start datetime</label>
+			<div class="col-xs-3">
+				<label>Start DateTime</label>
 				<div class="input-group">
 					<input type="text" class="form-control" uib-datepicker-popup="{{vm.filter.dateFrom.format}}" ng-model="vm.filter.dateFrom.date" is-open="vm.filter.dateFrom.opened" datepicker-options="vm.filter.dateFrom.options" close-text="Close"/>
 					<span class="input-group-btn">
@@ -19,13 +29,13 @@
 							<i class="glyphicon glyphicon-calendar"></i>
 						</button>
 					</span>
-					<div uib-timepicker ng-model="vm.filter.dateFrom.date" hour-step="1" minute-step="1"></div>
+					<!--<div uib-timepicker ng-model="vm.filter.dateFrom.date" hour-step="1" minute-step="1" show-seconds="true" show-meridian="false" show-spinners="false"></div>-->
 				</div>
 			</div>
 
 			<!-- Filter, select date range end -->
-			<div class="col-xs-6">
-				<label>Filter - end datetime</label>
+			<div class="col-xs-3">
+				<label>End DateTime</label>
 				<div class="input-group">
 					<input type="text" class="form-control" uib-datepicker-popup="{{vm.filter.dateTo.format}}" ng-model="vm.filter.dateTo.date" is-open="vm.filter.dateTo.opened" datepicker-options="vm.filter.dateTo.options" close-text="Close"/>
 					<span class="input-group-btn">
@@ -33,20 +43,7 @@
 							<i class="glyphicon glyphicon-calendar"></i>
 						</button>
 					</span>
-					<div uib-timepicker ng-model="vm.filter.dateTo.date" hour-step="1" minute-step="1"></div>
-				</div>
-			</div>
-
-			<!-- Update chart or Apply or Clear filters -->
-			<div class="col-xs-12">
-				<label>Actions</label>
-				<div class="input-group btn-group" role="group">
-					<button type="button" class="btn btn-success" ng-click="vm.applyFilter()">
-						Apply <i class="glyphicon glyphicon-ok"></i>
-					</button>
-					<button type="button" class="btn btn-danger" ng-click="vm.clearFilter()">
-						Clear <i class="glyphicon glyphicon-remove"></i>
-					</button>
+					<!--<div uib-timepicker ng-model="vm.filter.dateTo.date" hour-step="1" minute-step="1" show-seconds="true" show-meridian="false" show-spinners="false"></div>-->
 				</div>
 			</div>
 
@@ -62,8 +59,18 @@
 				<p class="visualizer-section-header">Visualization</p>
 			</div>
 
-			<!-- Variable selection -->
-			<div class="col-xs-6">
+			<!-- Visualization, actions -->
+			<div class="col-xs-1">
+				<label>Actions</label>
+				<div class="input-group btn-group" role="group">
+					<button type="button" class="btn btn-danger" ng-click="vm.clearChart()">
+						Clear <i class="glyphicon glyphicon-remove"></i>
+					</button>
+				</div>
+			</div>
+
+			<!-- Visualization, add variable -->
+			<div class="col-xs-3">
 				<label>Add variable</label>
 				<div class="dropdown">
 					<button type="button" class="btn btn-default dropdown-toggle" id="dropdownVariable" data-toggle="dropdown" aria-haspopups="true" aria-expanded="true">
@@ -77,18 +84,8 @@
 				</div>
 			</div>
 
-			<!-- Actions -->
-			<div class="col-xs-6">
-				<label>Actions</label>
-				<div class="input-group btn-group" role="group">
-					<button type="button" class="btn btn-info" ng-click="vm.updateChart()">
-						Update <i class="glyphicon glyphicon-refresh"></i>
-					</button>
-				</div>
-			</div>
-
 			<!-- Chart -->
-			<div class="col-xs-12 visualizer-chart-section">
+			<div class="col-xs-12" style="margin-top:16px;">
 				<canvas id="line"
 						class="chart chart-line"
 						chart-data="vm.chart.data"

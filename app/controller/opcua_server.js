@@ -46,7 +46,7 @@ module.exports = function(
 	vm.filter = {
 		dateFrom: {
 			date: new Date(),
-			format: 'dd.MM.yyyy',
+			format: 'dd.MM.yyyy HH:mm:ss',
 			options: {
 				formatYear: 'yy',
 				maxDate: new Date(2100, 1, 1),
@@ -57,7 +57,7 @@ module.exports = function(
 		},
 		dateTo: {
 			date: new Date(),
-			format: 'dd.MM.yyyy',
+			format: 'dd.MM.yyyy HH:mm:ss',
 			options: {
 				formatYear: 'yy',
 				maxDate: new Date(2100, 1, 1),
@@ -78,8 +78,8 @@ module.exports = function(
 		vm.filter.dateTo.opened = true;
 	};
 
-	// Filter, clear
-	vm.clearFilter = function() {
+	// Filter, reset
+	vm.resetFilter = function() {
 		vm.filter.dateFrom.date = new Date();
 		vm.filter.dateFrom.date.setMinutes(vm.filter.dateFrom.date.getMinutes() - 1);
 		vm.filter.dateTo.date = new Date();
@@ -230,8 +230,8 @@ module.exports = function(
 	OPCUA_Server_Srvce.fetchServers();
 	OPCUA_Subscription_Srvce.fetchSubscriptions(null, null, $stateParams.serverId);
 
-	// Filter, clear parameters
-	vm.clearFilter();
+	// Filter, reset parameters
+	vm.resetFilter();
 
 	// Chart, clear parameters
 	vm.clearChart();

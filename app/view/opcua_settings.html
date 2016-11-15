@@ -1,0 +1,31 @@
+<div ng-controller="OPCUA_Settings_Ctrl as vm">
+
+	<!-- Settings -->
+	<div class="container visualizer-settings-section">
+		<div class="row">
+
+			<!-- Section header -->
+			<div class="col-xs-12">
+				<p class="visualizer-section-header">Settings</p>
+			</div>
+
+			<!-- Settings, use REST or socket.io -->
+			<div class="col-xs-2">
+				<label>Use REST or Socket.IO:</label>
+			</div>
+
+			<div class="col-xs-10">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					{{vm.getSettings().socketio == false ? 'REST' : 'Socket.IO'}} <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu">
+					<li><a ng-click="vm.getSettings().socketio = false;">REST</a></li>
+					<li><a ng-click="vm.getSettings().socketio = true;">Socket.IO</a></li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+
+
+</div>
