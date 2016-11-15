@@ -1,7 +1,7 @@
 <div ng-controller="OPCUA_Server_Ctrl as vm">
 
 	<!-- Filtering -->
-	<div class="container visualizer-filter-section">
+	<div class="container visualizer-filter-section" ng-if="vm.getSettings().socketio == false">
 		<div class="row">
 
 			<!-- Section header -->
@@ -10,30 +10,37 @@
 			</div>
 
 			<!-- Filter, select date range start -->
-			<div class="col-xs-4 col-sm-3 col-md-2">
+			<div class="col-xs-6">
 				<label>Filter - start datetime</label>
 				<div class="input-group">
-					<input type="text" class="form-control"/>
-					<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+					<input type="text" class="form-control" uib-datepicker-popup="{{vm.filter.dateFrom.format}}" ng-model="vm.filter.dateFrom.date" is-open="vm.filter.dateFrom.opened" datepicker-options="vm.filter.dateFrom.options" close-text="Close"/>
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="vm.openDateFromFilter()">
+							<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+					<div uib-timepicker ng-model="vm.filter.dateFrom.date" hour-step="1" minute-step="1"></div>
 				</div>
 			</div>
 
 			<!-- Filter, select date range end -->
-			<div class="col-xs-4 col-sm-3 col-md-2">
+			<div class="col-xs-6">
 				<label>Filter - end datetime</label>
 				<div class="input-group">
-					<input type="text" class="form-control"/>
-					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+					<input type="text" class="form-control" uib-datepicker-popup="{{vm.filter.dateTo.format}}" ng-model="vm.filter.dateTo.date" is-open="vm.filter.dateTo.opened" datepicker-options="vm.filter.dateTo.options" close-text="Close"/>
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="vm.openDateToFilter()">
+							<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+					<div uib-timepicker ng-model="vm.filter.dateTo.date" hour-step="1" minute-step="1"></div>
 				</div>
 			</div>
 
 			<!-- Update chart or Apply or Clear filters -->
-			<div class="col-xs-6 col-sm-5 col-md-3">
+			<div class="col-xs-12">
 				<label>Actions</label>
-				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-info" ng-click="vm.updateChart()">
-						Update <i class="glyphicon glyphicon-refresh"></i>
-					</button>
+				<div class="input-group btn-group" role="group">
 					<button type="button" class="btn btn-success" ng-click="vm.applyFilter()">
 						Apply <i class="glyphicon glyphicon-ok"></i>
 					</button>
@@ -56,7 +63,7 @@
 			</div>
 
 			<!-- Variable selection -->
-			<div class="col-xs-12">
+			<div class="col-xs-6">
 				<label>Add variable</label>
 				<div class="dropdown">
 					<button type="button" class="btn btn-default dropdown-toggle" id="dropdownVariable" data-toggle="dropdown" aria-haspopups="true" aria-expanded="true">
@@ -64,22 +71,34 @@
 					</button>
 					<ul class="dropdown-menu" aria-labelledby="dropdownVariable">
 						<li ng-repeat="subscription in vm.getSubscriptions()">
-							<a ng-click="vm.selectSubscription(subscription.identifier)">{{subscription.identifier}}</a>
+							<a ng-click="vm.addVarChart(subscription)">{{subscription.identifier}}</a>
 						</li>
 					</ul>
 				</div>
 			</div>
 
+			<!-- Actions -->
+			<div class="col-xs-6">
+				<label>Actions</label>
+				<div class="input-group btn-group" role="group">
+					<button type="button" class="btn btn-info" ng-click="vm.updateChart()">
+						Update <i class="glyphicon glyphicon-refresh"></i>
+					</button>
+				</div>
+			</div>
+
 			<!-- Chart -->
-			<canvas id="line"
-					class="chart chart-line"
-					chart-data="vm.chart.data"
-					chart-labels="vm.chart.labels"
-					chart-series="vm.chart.series"
-					chart-options="vm.chart.options"
-					chart-dataset-override="vm.chart.datasetoverride"
-					chart-click="vm.chartClick">
-			</canvas>
+			<div class="col-xs-12 visualizer-chart-section">
+				<canvas id="line"
+						class="chart chart-line"
+						chart-data="vm.chart.data"
+						chart-labels="vm.chart.labels"
+						chart-series="vm.chart.series"
+						chart-options="vm.chart.options"
+						chart-dataset-override="vm.chart.datasetoverride"
+						chart-click="vm.chartClick">
+				</canvas>
+			</div>
 
 		</div>
 	</div>

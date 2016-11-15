@@ -31,7 +31,7 @@
 								</a>
 								<ul class="dropdown-menu">
 									<li ng-repeat="server in vm.getServers()">
-										<a href="#opcua_server/{{server.serverId}}">ServerId({{server.serverId}}): {{server.endpoint}}</a>
+										<a href="#opcua_server/{{server.serverId}}">{{server.serverId}}, {{server.identifier}}: {{server.endpoint}}</a>
 									</li>
 								</ul>
 							</li>
