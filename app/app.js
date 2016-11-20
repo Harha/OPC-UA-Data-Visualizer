@@ -1,6 +1,7 @@
 // Non-angular includes
 var jquery = require('jquery');
 var bootstrap = require('bootstrap');
+var socketio = require('socket.io-client');
 
 // Angular instance
 var angular = require('angular');
@@ -29,8 +30,8 @@ app.config(['$resourceProvider', function($resourceProvider) {
 
 // App configuration
 app.constant('config', {
-	rest_url: 'http://harha.us.to:9090',
-	serv_url: 'http://harha.us.to:9091'
+	rest_url: 'http://localhost:9090',
+	serv_url: 'http://localhost:9091'
 });
 
 // App routes

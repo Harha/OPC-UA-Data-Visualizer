@@ -4,6 +4,7 @@ module.exports = function(
 	$scope,
 	$stateParams,
 	$q,
+	$interval,
 	$log,
 	OPCUA_Settings_Srvce,
 	OPCUA_Server_Srvce,
@@ -86,6 +87,28 @@ module.exports = function(
 	};
 
 	// ------------------------------------------------------------------------
+	// -- socket.io section
+	// ------------------------------------------------------------------------
+
+	// socket.io, js object
+	vm.socketio = {
+		subscriptions: [],
+		updaterate: 1000
+	};
+
+	// socket.io, interval task
+	if (vm.getSettings().socketio === true) {
+		$interval(function() {
+			for (var i = 0; i < vm.socketio.subscriptions.length; i++) {
+				
+			}
+		}, vm.socketio.updaterate);
+	}
+
+	var socket = io();
+	$log.debug(socket);
+
+	// ------------------------------------------------------------------------
 	// -- Chart section
 	// ------------------------------------------------------------------------
 
@@ -122,60 +145,67 @@ module.exports = function(
 	// Chart, add variable
 	vm.addVarChart = function(subscription) {
 
-		// Fetch variables
-		OPCUA_Variable_Srvce.fetchVariables(
-			subscription.nsIndex,
-			subscription.identifier,
-			subscription.serverId,
-			vm.filter.dateFrom.date,
-			vm.filter.dateTo.date
-		).then(function(results) {
+		// REST
+		if (vm.getSettings().socketio === false) {
+			// Fetch variables
+			OPCUA_Variable_Srvce.fetchVariables(
+				subscription.nsIndex,
+				subscription.identifier,
+				subscription.serverId,
+				vm.filter.dateFrom.date,
+				vm.filter.dateTo.date
+			).then(function(results) {
 
-			// Add series
-			vm.chart.series.push(subscription.identifier);
+				// Add series
+				vm.chart.series.push(subscription.identifier);
 
-			// Axis count
-			var n_axes = vm.chart.options.scales.yAxes.length;
+				// Axis count
+				var n_axes = vm.chart.options.scales.yAxes.length;
 
-			// Add axis
-			vm.chart.options.scales.yAxes.push({
-				id: 'y-axis-' + n_axes,
-				type: 'linear',
-				display: true,
-				position: 'left'
-			});
+				// Add axis
+				vm.chart.options.scales.yAxes.push({
+					id: 'y-axis-' + n_axes,
+					type: 'linear',
+					display: true,
+					position: 'left'
+				});
 
-			// Add dataset identifier
-			vm.chart.datasetoverride.push({
-				yAxisID: 'y-axis-' + n_axes
-			});
+				// Add dataset identifier
+				vm.chart.datasetoverride.push({
+					yAxisID: 'y-axis-' + n_axes
+				});
 
-			// Add new array to data
-			vm.chart.data.push([]);
+				// Add new array to data
+				vm.chart.data.push([]);
 
-			// Add labels (x) and data (y)
-			for (var i = 0; i < results.length; i++) {
-				var var_new = results[i];
-				
-				if (n_axes <= 0) {
-					var serverTimeStamp = new Date(var_new.serverTimeStamp).toISOString();
-					var filterDateDiff = Math.abs(vm.filter.dateFrom.date.getTime() - vm.filter.dateTo.date.getTime());
-					var filterDateDiffDays = Math.ceil(filterDateDiff / (1000 * 3600 * 24));
-					if (filterDateDiffDays > 1.0) {
-						vm.chart.labels.push(serverTimeStamp.slice(0, serverTimeStamp.length - 5).replace('T', ' '));
+				// Add labels (x) and data (y)
+				for (var i = 0; i < results.length; i++) {
+					var var_new = results[i];
+					
+					if (n_axes <= 0) {
+						var serverTimeStamp = new Date(var_new.serverTimeStamp).toISOString();
+						var filterDateDiff = Math.abs(vm.filter.dateFrom.date.getTime() - vm.filter.dateTo.date.getTime());
+						var filterDateDiffDays = Math.ceil(filterDateDiff / (1000 * 3600 * 24));
+						if (filterDateDiffDays > 1.0) {
+							vm.chart.labels.push(serverTimeStamp.slice(0, serverTimeStamp.length - 5).replace('T', ' '));
+						} else {
+							vm.chart.labels.push(serverTimeStamp.slice(11, serverTimeStamp.length - 1));
+						}
+					}
+
+					if (var_new.value == 'true' || var_new.value == 'false') {
+						vm.chart.data[n_axes].push(var_new.value == 'true' ? 1 : 0);
 					} else {
-						vm.chart.labels.push(serverTimeStamp.slice(11, serverTimeStamp.length - 1));
+						vm.chart.data[n_axes].push(parseFloat(var_new.value));
 					}
 				}
 
-				if (var_new.value == 'true' || var_new.value == 'false') {
-					vm.chart.data[n_axes].push(var_new.value == 'true' ? 1 : 0);
-				} else {
-					vm.chart.data[n_axes].push(parseFloat(var_new.value));
-				}
-			}
-
-		});
+			});
+		}
+		// socket.io
+		else {
+			vm.socketio.subscriptions.push(subscription);
+		}
 
 	};
 
