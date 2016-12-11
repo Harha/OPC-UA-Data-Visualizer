@@ -1,7 +1,6 @@
 // Non-angular includes
 var jquery = require('jquery');
 var bootstrap = require('bootstrap');
-var socketio = require('socket.io-client');
 
 // Angular instance
 var angular = require('angular');

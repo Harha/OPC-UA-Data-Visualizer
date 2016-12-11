@@ -6,10 +6,12 @@ module.exports = function(
 	$q,
 	$interval,
 	$log,
+	config,
 	OPCUA_Settings_Srvce,
 	OPCUA_Server_Srvce,
 	OPCUA_Subscription_Srvce,
-	OPCUA_Variable_Srvce
+	OPCUA_Variable_Srvce,
+	OPCUA_Socket_Srvce
 ) {
 
 	// Controller instance
@@ -93,20 +95,31 @@ module.exports = function(
 	// socket.io, js object
 	vm.socketio = {
 		subscriptions: [],
-		updaterate: 1000
+		updaterate: 100
 	};
 
-	// socket.io, interval task
-	if (vm.getSettings().socketio === true) {
+	// socket.io, if enabled
+	if (vm.getSettings().socketio === true && OPCUA_Socket_Srvce.initialized === false) {
+		// get socket instance
+		var socket = OPCUA_Socket_Srvce.socket;
+
+		// socket, receive opcuavariable
+		socket.on('opcuavariable', function(data) {
+			$log.debug('input | opcuavariable, identifier: ' + data.identifier + ', timestamp: ' + data.serverTimeStamp);
+
+			vm.addValueChart(data);
+		});
+
+		// socket, fetch variables
 		$interval(function() {
 			for (var i = 0; i < vm.socketio.subscriptions.length; i++) {
-				
+				socket.emit('opcuavariable', vm.socketio.subscriptions[i]);
 			}
 		}, vm.socketio.updaterate);
-	}
 
-	var socket = io();
-	$log.debug(socket);
+		// socket, set initialized to true
+		OPCUA_Socket_Srvce.initialized = true;
+	}
 
 	// ------------------------------------------------------------------------
 	// -- Chart section
@@ -140,6 +153,82 @@ module.exports = function(
 		vm.chart.datasetoverride = [];
 		vm.chart.labels = [];
 		vm.chart.data = [];
+	};
+
+	// Chart, add value
+	vm.addValueChart = function(variable) {
+		// Is this a new or existing variable?
+		var add_new = false;
+		if (vm.chart.series.indexOf(variable.identifier) === -1)
+			add_new = true;
+
+		// Axis number for the variable
+		var n_axis = vm.chart.options.scales.yAxes.length - 1;
+		if (add_new === true) {
+			for (var i = 0; i < vm.socketio.subscriptions.length; i++) {
+				var sub = vm.socketio.subscriptions[i];
+
+				if (sub.identifier == variable.identifier && sub.nsIndex == variable.nsIndex) {
+					n_axis = i;
+					break;
+				}
+			}
+		}
+
+		// Check if we need to update the variable, return if not
+		if (add_new === false) {
+			$log.debug('test');
+			if (vm.socketio.subscriptions[n_axis].lastUpdate != null) {
+				if (vm.socketio.subscriptions[n_axis].lastUpdate == variable.serverTimeStamp) {
+					return;
+				}
+			}
+		}
+
+		// Add new series if it doesn't exist
+		if (add_new === true)
+			vm.chart.series.push(variable.identifier);
+
+		// Add axis if it doesn't exist
+		if (add_new === true) {
+			vm.chart.options.scales.yAxes.push({
+				id: 'y-axis-' + n_axis,
+				type: 'linear',
+				display: true,
+				position: 'left'
+			});
+		}
+
+		// Add dataset identifier if it doesn't exist
+		if (add_new === true) {
+			vm.chart.datasetoverride.push({
+				yAxisID: 'y-axis-' + n_axis
+			});
+		}
+
+		// Add new array to data
+		if (add_new === true)
+			vm.chart.data.push([]);
+
+		// Add labels (x)
+		var serverTimeStamp = new Date(variable.serverTimeStamp).toISOString();
+		var filterDateDiff = Math.abs(vm.filter.dateFrom.date.getTime() - vm.filter.dateTo.date.getTime());
+		var filterDateDiffDays = Math.ceil(filterDateDiff / (1000 * 3600 * 24));
+		if (filterDateDiffDays > 1.0) {
+			vm.chart.labels.push(serverTimeStamp.slice(0, serverTimeStamp.length - 5).replace('T', ' '));
+		} else {
+			vm.chart.labels.push(serverTimeStamp.slice(11, serverTimeStamp.length - 1));
+		}
+
+		// Add data (y)
+		if (variable.value == 'true' || variable.value == 'false') {
+			vm.chart.data[n_axis].push(variable.value == 'true' ? 1 : 0);
+		} else {
+			vm.chart.data[n_axis].push(parseFloat(variable.value));
+		}
+
+		// Add last timestamp to subscription
+		vm.socketio.subscriptions[n_axis].lastUpdate = variable.serverTimeStamp;
 	};
 
 	// Chart, add variable

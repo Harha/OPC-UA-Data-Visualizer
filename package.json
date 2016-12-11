@@ -28,7 +28,7 @@
   },
   "scripts": {
     "clean": "rimraf ./dist && mkdir dist && mkdir dist\\scripts && mkdir dist\\css && mkdir dist\\fonts",
-    "build:js": "browserify ./app/app.js -o ./dist/scripts/bundle.js",
+    "build:js": "browserify ./app/app.js -o ./dist/scripts/bundle.js && cpx ./node_modules/socket.io-client/dist/socket.io.min.js ./dist/scripts/",
     "build:html": "cpx ./app/**/*.html ./dist/",
     "build:css": "cpx ./app/**/*.css ./dist/ && cpx ./node_modules/bootstrap/dist/css/bootstrap.min.css ./dist/css/",
     "build:fonts": "cpx ./node_modules/bootstrap/dist/fonts/**/*.* ./dist/fonts/",
@@ -58,7 +58,7 @@
     "bootstrap": "3.3.7",
     "jquery": "3.1.1",
     "moment": "2.16.0",
-    "socket.io": "1.5.1"
+    "socket.io": "1.7.2"
   },
   "devDependencies": {
     "browserify": "13.1.1",
