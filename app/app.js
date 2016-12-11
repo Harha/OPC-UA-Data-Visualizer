@@ -31,7 +31,7 @@ app.config(['$resourceProvider', function($resourceProvider) {
 app.constant('config', {
 	rest_url: 'http://localhost:9090',
 	serv_url: 'http://localhost:9091',
-	chart_max_values: 64
+	chart_max_values: 32
 });
 
 // App routes

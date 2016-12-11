@@ -95,6 +95,7 @@ module.exports = function(
 	// socket.io, js object
 	vm.socketio = {
 		subscriptions: [],
+		data: [],
 		updaterate: 100
 	};
 
@@ -105,15 +106,21 @@ module.exports = function(
 
 		// socket, receive opcuavariable
 		socket.on('opcuavariable', function(data) {
-			$log.debug('input | opcuavariable, length: ' + data.length);
+			$log.debug('input | opcuavariable, identifier: ' + data.identifier + ", nsIndex: " + data.nsIndex);
 
-			vm.addValueChart(data);
+			vm.socketio.data.push(data);
+
+			if (vm.socketio.data.length >= vm.socketio.subscriptions.length) {
+				vm.addValueChart(vm.socketio.data);
+				vm.socketio.data = [];
+			}
 		});
 
 		// socket, fetch variables
 		$interval(function() {
-			if (vm.socketio.subscriptions.length > 0)
-				socket.emit('opcuavariable', vm.socketio.subscriptions);
+			for (var i = 0; i < vm.socketio.subscriptions.length; i++) {
+				socket.emit('opcuavariable', vm.socketio.subscriptions[i]);
+			}
 		}, vm.socketio.updaterate);
 
 		// socket, set initialized to true
@@ -233,7 +240,7 @@ module.exports = function(
 		}
 
 		// Add label if we added new data
-		if (added_new === true) {
+		if (added_new === true && add_label) {
 			var timeStamp = new Date().toISOString();
 			vm.chart.labels.push(timeStamp.slice(0, timeStamp.length - 5).replace('T', ' '));
 
