@@ -29,8 +29,8 @@ app.config(['$resourceProvider', function($resourceProvider) {
 
 // App configuration
 app.constant('config', {
-	rest_url: 'http://localhost:9090',
-	serv_url: 'http://localhost:9091',
+	rest_url: 'http://harha.us.to:9090',
+	serv_url: 'http://harha.us.to:9091',
 	chart_max_values: 32
 });
 

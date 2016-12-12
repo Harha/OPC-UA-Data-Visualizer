@@ -17,6 +17,16 @@ module.exports = function(
 	// Controller instance
 	var vm = this;
 
+	// Controller destructor
+	$scope.$on('$destroy', function handler() {
+		OPCUA_Socket_Srvce.socket.removeAllListeners();
+		OPCUA_Socket_Srvce.initialized = false;
+		vm.socketio.subscriptions = [];
+		vm.socketio.data = [];
+		$interval.cancel(vm.interval);
+		vm.interval = undefined;
+	});
+
 	// ------------------------------------------------------------------------
 	// -- Data section
 	// ------------------------------------------------------------------------
@@ -117,7 +127,7 @@ module.exports = function(
 		});
 
 		// socket, fetch variables
-		$interval(function() {
+		vm.interval = $interval(function() {
 			for (var i = 0; i < vm.socketio.subscriptions.length; i++) {
 				socket.emit('opcuavariable', vm.socketio.subscriptions[i]);
 			}
@@ -240,7 +250,7 @@ module.exports = function(
 		}
 
 		// Add label if we added new data
-		if (added_new === true && add_label) {
+		if (added_new === true) {
 			var timeStamp = new Date().toISOString();
 			vm.chart.labels.push(timeStamp.slice(0, timeStamp.length - 5).replace('T', ' '));
 
