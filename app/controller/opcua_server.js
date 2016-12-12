@@ -143,6 +143,8 @@ module.exports = function(
 
 	// Chart, configuration
 	Chart.defaults.global.colors = ['#46BFBD', '#00ADF9', '#DCDCDC', '#803690', '#FDB45C', '#949FB1', '#4D5360'];
+	Chart.defaults.global.animation.easing = 'linear';
+	Chart.defaults.global.animation.duration = 0;
 
 	// Chart, js object
 	vm.chart = {
@@ -341,4 +343,6 @@ module.exports = function(
 	// Chart, clear parameters
 	vm.clearChart();
 
+	$log.debug('Chart properties:');
+	$log.debug(Chart.defaults);
 };
